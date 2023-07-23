@@ -26,14 +26,14 @@ bool get_from_buffer(bool scr[], aa_context* context, int x, int y){
 
 uint8_t neighbours(bool scr[], aa_context* context, int x, int y){
     uint8_t value = 0;
-    if (get_from_buffer(scr, context, x-1, y-1) == true) value ++;
-    if (get_from_buffer(scr, context, x, y-1) == true) value ++;
-    if (get_from_buffer(scr, context, x+1, y-1) == true) value ++;
-    if (get_from_buffer(scr, context, x-1, y) == true) value ++;
-    if (get_from_buffer(scr, context, x+1, y) == true) value ++;
-    if (get_from_buffer(scr, context, x-1, y+1) == true) value ++;
-    if (get_from_buffer(scr, context, x, y+1) == true) value ++;
-    if (get_from_buffer(scr, context, x+1, y+1) == true) value ++;
+    if (get_from_buffer(scr, context, x - 1, y - 1)) value ++;
+    if (get_from_buffer(scr, context, x, y - 1)) value ++;
+    if (get_from_buffer(scr, context, x+1, y-1)) value ++;
+    if (get_from_buffer(scr, context, x-1, y)) value ++;
+    if (get_from_buffer(scr, context, x+1, y)) value ++;
+    if (get_from_buffer(scr, context, x-1, y+1)) value ++;
+    if (get_from_buffer(scr, context, x, y+1)) value ++;
+    if (get_from_buffer(scr, context, x+1, y+1)) value ++;
     return value;
 }
 
@@ -75,7 +75,13 @@ void iterate(aa_context* context){
 aa_context *context;
 int cur_x, cur_y;
 int input;
-int main() {
+int main(int argc, char **argv) {
+    if(!aa_parseoptions(nullptr, nullptr, &argc, argv) || argc!=1) {
+        printf("Usage: %s [options]\n"
+               "Options:\n"
+               "%s", argv[0], aa_help);
+        return 2;
+    }
     context = aa_autoinit(&aa_defparams);
     if(context == nullptr) {
         fprintf(stderr,"Cannot initialize AA-lib. Sorry\n");
