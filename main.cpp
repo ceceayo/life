@@ -1,3 +1,21 @@
+/*
+* Life. John Conway's famous game of life. Implementation by ceceayo
+* Copyright (C) 2023 ceceayo
+
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include <iostream>
 #include <aalib.h>
 #include <cstring>
@@ -77,6 +95,10 @@ int cur_x;
 int cur_y = 1;
 int input;
 int main(int argc, char **argv) {
+    cout << "    ceceayo/life  Copyright (C) 2023  ceceayo\n"
+            "    This program comes with ABSOLUTELY NO WARRANTY; for details see `LICENSE` in the source.\n"
+            "    This is free software, and you are welcome to redistribute it\n"
+            "    under certain conditions."<<endl;
     if(!aa_parseoptions(nullptr, nullptr, &argc, argv) || argc!=1) {
         printf("Usage: %s [options]\n"
                "Options:\n"
