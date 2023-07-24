@@ -6,14 +6,14 @@
 #define off " "
 
 using namespace std;
-
+unsigned int iterations = 0;
 
 
 bool get_from_buffer(bool scr[], aa_context* context, int x, int y){
     if (x < 0) return false;
-    if (y < 0) return false;
+    if (y < 1) return false;
     if (x >= aa_scrwidth(context)) return false;
-    if (y >= aa_scrheight(context)) return false;
+    if (y >= aa_scrheight(context)-2) return false;
 
     unsigned char z = scr[((y)* aa_scrwidth(context)) + (x)];
     if(scr[((y) * aa_scrwidth(context)) + (x)]){
@@ -45,7 +45,7 @@ void iterate(aa_context* context){
             //cout << aa_text(context)[(y* aa_scrwidth(context)+x)] << endl;
         }
     }
-    for(int y=0; y != aa_scrheight(context); y++){
+    for(int y=1; y != aa_scrheight(context)-2; y++){
         for (int x=0; x != aa_scrwidth(context); x++){
             if (get_from_buffer(scr, context, x, y)) {
                 switch (neighbours(scr, context, x, y)) {
@@ -60,11 +60,11 @@ void iterate(aa_context* context){
                         break;
                     case 2:
                     case 3:
-                        aa_puts(context, x, y, AA_SPECIAL, on);
+                        aa_puts(context, x, y, AA_NORMAL, on);
                         break;
                 }
             } else {
-                if (neighbours(scr, context, x, y) == 3) aa_puts(context, x, y, AA_SPECIAL, on);
+                if (neighbours(scr, context, x, y) == 3) aa_puts(context, x, y, AA_NORMAL, on);
             }
         }
     }
@@ -73,7 +73,8 @@ void iterate(aa_context* context){
 
 
 aa_context *context;
-int cur_x, cur_y;
+int cur_x;
+int cur_y = 1;
 int input;
 int main(int argc, char **argv) {
     if(!aa_parseoptions(nullptr, nullptr, &argc, argv) || argc!=1) {
@@ -87,7 +88,23 @@ int main(int argc, char **argv) {
         fprintf(stderr,"Cannot initialize AA-lib. Sorry\n");
         return 1;
     }
-    aa_autoinitkbd(context, 0);
+    aa_autoinitkbd(context, 1);
+    aa_puts(context, 0, 0, AA_SPECIAL, "Game Of Life");
+    aa_puts(context, aa_scrwidth(context)-4, 0, AA_SPECIAL, "v0.2");
+    aa_puts(context, 20, 0, AA_SPECIAL, "I=0");
+    aa_puts(context, 0, aa_scrheight(context)-2, AA_SPECIAL, "Z");
+    aa_puts(context, 2, aa_scrheight(context)-2, AA_NORMAL, "iterate");
+    aa_puts(context, 14, aa_scrheight(context)-2, AA_SPECIAL, "ARROWS");
+    aa_puts(context, 21, aa_scrheight(context)-2, AA_NORMAL, "move cursor");
+    aa_puts(context, 36, aa_scrheight(context)-2, AA_SPECIAL, ",");
+    aa_puts(context, 38, aa_scrheight(context)-2, AA_NORMAL, "disable cell");
+    aa_puts(context, 54, aa_scrheight(context)-2, AA_SPECIAL, ".");
+    aa_puts(context, 56, aa_scrheight(context)-2, AA_NORMAL, "enable cell");
+    aa_puts(context, 0, aa_scrheight(context)-1, AA_NORMAL, "Cells live with 2 or 3 neighbours, and get born with 3 neighbours");
+    aa_puts(context, 16, aa_scrheight(context)-1, AA_SPECIAL, "2 or 3");
+    aa_puts(context, 53, aa_scrheight(context)-1, AA_SPECIAL, "3");
+    aa_gotoxy(context, 0, 1);
+    aa_showcursor(context);
     while (true){
         aa_flush(context);
         input = aa_getkey(context, 0);
@@ -106,21 +123,24 @@ int main(int argc, char **argv) {
                 break;
             case AA_UP:
                 cur_y = ( cur_y - 1 ) ;
-                if (cur_y == -1) cur_y = aa_scrheight(context);
+                if (cur_y == 0) cur_y = (aa_scrheight(context) - 3);
                 aa_gotoxy(context, cur_x, cur_y);
                 break;
             case AA_DOWN:
-                cur_y = ( cur_y + 1 ) % aa_scrheight(context);
+                cur_y = ( cur_y + 1 ) % (aa_scrheight(context) - 2);
+                if (cur_y == 0) cur_y = 1;
                 aa_gotoxy(context, cur_x, cur_y);
                 break;
             case ',':
                 aa_puts(context, cur_x, cur_y, AA_NORMAL, off);
                 break;
             case '.':
-                aa_puts(context, cur_x, cur_y, AA_SPECIAL, on);
+                aa_puts(context, cur_x, cur_y, AA_BOLD, on);
                 break;
             case 'z':
                 iterate(context);
+                iterations++;
+                aa_puts(context, 22, 0, AA_SPECIAL, to_string(iterations).c_str());
                 break;
             default:
                 break;
